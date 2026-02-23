@@ -436,7 +436,7 @@ function Dashboard() {
   }
 
   const shareQr = async () => {
-    const menuUrl = qr?.target_url || `${window.location.origin}/menu/${user.id}`
+    const menuUrl = `${window.location.origin}/menu/${user.id}`
     await shareWithFallback({
       title: `${user.restaurant_name} QR`,
       text: `Scan this QR to view the menu for ${user.restaurant_name}: ${menuUrl}`,
@@ -447,7 +447,7 @@ function Dashboard() {
   }
 
   const shareMenu = async () => {
-    const menuUrl = qr?.target_url || `${window.location.origin}/menu/${user.id}`
+    const menuUrl = `${window.location.origin}/menu/${user.id}`
     await shareWithFallback({
       title: `${user.restaurant_name} Menu`,
       text: `Here is our menu link: ${menuUrl}`,
@@ -458,7 +458,7 @@ function Dashboard() {
   }
 
   const openQrInNewTab = () => {
-    const menuUrl = qr?.target_url || `${window.location.origin}/menu/${user.id}`
+    const menuUrl = `${window.location.origin}/menu/${user.id}`
     const popup = window.open(menuUrl, '_blank', 'noopener,noreferrer')
     if (!popup) {
       setError('Popup blocked. Please allow popups and try again.')
