@@ -19,17 +19,24 @@ function PreviewModal({ open, restaurantId, template, onClose }) {
           <h2>Live Menu Template Preview</h2>
           <button type="button" onClick={onClose}>Close</button>
         </div>
-        {hasAsset && isImageAsset && (
-          <div className="template-upload-view">
-            <img src={template.asset_url} alt={template.name || 'Template image'} className="template-upload-image" />
+        <div className="preview-stack">
+          {hasAsset && (
+            <div className="preview-block">
+              <h3>Uploaded Template File</h3>
+              {isImageAsset && (
+                <div className="template-upload-view">
+                  <img src={template.asset_url} alt={template.name || 'Template image'} className="template-upload-image" />
+                </div>
+              )}
+              {isPdfAsset && <iframe src={template.asset_url} title="Template PDF" className="preview-frame template-file-frame" />}
+            </div>
+          )}
+
+          <div className="preview-block">
+            <h3>Live Menu Preview</h3>
+            <iframe src={url} title="Menu Preview" className="preview-frame" />
           </div>
-        )}
-
-        {hasAsset && isPdfAsset && (
-          <iframe src={template.asset_url} title="Template PDF" className="preview-frame" />
-        )}
-
-        {!hasAsset && <iframe src={url} title="Menu Preview" className="preview-frame" />}
+        </div>
       </section>
     </div>
   )

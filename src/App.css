@@ -976,6 +976,24 @@ button:disabled {
   background: #fff;
 }
 
+.preview-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.preview-block {
+  display: grid;
+  gap: 8px;
+}
+
+.preview-block h3 {
+  margin: 0;
+}
+
+.template-file-frame {
+  height: 520px;
+}
+
 .template-upload-view {
   display: grid;
   place-items: center;
