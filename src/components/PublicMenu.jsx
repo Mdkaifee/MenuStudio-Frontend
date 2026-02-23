@@ -17,6 +17,11 @@ function PublicMenu() {
     return parts.length >= 2 ? parts[1] : ''
   }, [])
 
+  const previewTemplateId = useMemo(() => {
+    const params = new URLSearchParams(window.location.search)
+    return params.get('preview') || ''
+  }, [])
+
   useEffect(() => {
     const onResize = () => setPageCapacity(getPageCapacity())
     window.addEventListener('resize', onResize)
@@ -27,7 +32,39 @@ function PublicMenu() {
     const load = async () => {
       try {
         const data = await apiRequest(`/public/menu/${restaurantId}`)
-        setMenu(data)
+        if (!previewTemplateId) {
+          setMenu(data)
+          return
+        }
+
+        const nextData = { ...data }
+        const previewRaw = sessionStorage.getItem('restaurant_menu_preview_template')
+        let previewTemplate = null
+        if (previewRaw) {
+          try {
+            previewTemplate = JSON.parse(previewRaw)
+          } catch {
+            previewTemplate = null
+          }
+        }
+
+        if (previewTemplate?.id === previewTemplateId) {
+          nextData.template_id = previewTemplate.id
+          if (previewTemplate.style_id) {
+            nextData.template_style_id = previewTemplate.style_id
+          }
+          if (previewTemplate.asset_url) {
+            nextData.template_asset_url = previewTemplate.asset_url
+          }
+          if (previewTemplate.asset_type) {
+            nextData.template_asset_type = previewTemplate.asset_type
+          }
+        } else if (['classic-blue', 'slate-minimal', 'warm-paper'].includes(previewTemplateId)) {
+          nextData.template_id = previewTemplateId
+          nextData.template_style_id = previewTemplateId
+        }
+
+        setMenu(nextData)
       } catch (err) {
         setError(err.message)
       } finally {
@@ -36,7 +73,7 @@ function PublicMenu() {
     }
 
     load()
-  }, [restaurantId])
+  }, [previewTemplateId, restaurantId])
 
   const pages = useMemo(() => {
     if (!menu) {
@@ -67,6 +104,15 @@ function PublicMenu() {
 
   const totalPages = pages.length || 1
   const currentPage = pages[pageIndex] || []
+  const isCustomUploadTemplate = menu.template_style_id === 'custom-upload'
+  const hasCustomTemplateImage = isCustomUploadTemplate && menu.template_asset_type === 'image' && menu.template_asset_url
+  const customTemplateStyle = hasCustomTemplateImage
+    ? {
+        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.72)), url(${menu.template_asset_url})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }
+    : undefined
 
   const goNext = () => {
     setFlipDirection('next')
@@ -80,7 +126,7 @@ function PublicMenu() {
 
   return (
     <main className={`public-menu-wrap template-${menu.template_style_id || menu.template_id}`}>
-      <div className="public-menu book-shell">
+      <div className="public-menu book-shell" style={customTemplateStyle}>
         <h1>{menu.restaurant_name}</h1>
 
         {totalPages > 1 && (

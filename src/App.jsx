@@ -46,6 +46,7 @@ function Dashboard() {
   const [templatePreviewOpen, setTemplatePreviewOpen] = useState(false)
   const [previewTemplateId, setPreviewTemplateId] = useState('')
   const [previewMode, setPreviewMode] = useState('menu')
+  const PREVIEW_TEMPLATE_KEY = 'restaurant_menu_preview_template'
 
   const authHeaders = useMemo(() => {
     return token ? { Authorization: `Bearer ${token}` } : {}
@@ -69,6 +70,7 @@ function Dashboard() {
     setTemplatePreviewOpen(false)
     setPreviewTemplateId('')
     setPreviewMode('menu')
+    sessionStorage.removeItem(PREVIEW_TEMPLATE_KEY)
     setInfoNotice('')
     localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem(USER_KEY)
@@ -403,6 +405,16 @@ function Dashboard() {
     if (!templateId) {
       return
     }
+    const selectedTemplate = templates.find((tpl) => tpl.id === templateId)
+    if (mode === 'menu' && selectedTemplate) {
+      const previewTemplate = {
+        id: selectedTemplate.id,
+        style_id: selectedTemplate.is_custom ? 'custom-upload' : selectedTemplate.style_id,
+        asset_url: selectedTemplate.asset_url || '',
+        asset_type: selectedTemplate.asset_type || '',
+      }
+      sessionStorage.setItem(PREVIEW_TEMPLATE_KEY, JSON.stringify(previewTemplate))
+    }
     if (mode === 'menu' && templateId !== user.template_id) {
       const switched = await selectTemplate(templateId)
       if (!switched) {
@@ -572,6 +584,7 @@ function Dashboard() {
         onClose={() => {
           setTemplatePreviewOpen(false)
           setPreviewMode('menu')
+          sessionStorage.removeItem(PREVIEW_TEMPLATE_KEY)
         }}
       />
     </main>

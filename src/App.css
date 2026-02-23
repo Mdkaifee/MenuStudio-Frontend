@@ -1162,6 +1162,21 @@ button:disabled {
   color: #8b4f19;
 }
 
+.template-custom-upload .public-menu {
+  border: 1px solid #d7deeb;
+  color: #1f2736;
+}
+
+.template-custom-upload .book-page {
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.template-custom-upload .book-heading {
+  color: #1f2736;
+  border-left: 4px solid #1f2736;
+  padding-left: 10px;
+}
+
 @keyframes flip-next {
   from {
     opacity: 0.6;
