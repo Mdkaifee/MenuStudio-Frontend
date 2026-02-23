@@ -994,6 +994,21 @@ button:disabled {
   height: 520px;
 }
 
+.template-only-preview {
+  width: 100%;
+  min-height: 620px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 24px;
+  overflow: auto;
+}
+
+.template-only-preview .public-menu {
+  width: min(900px, 100%);
+  margin: 0 auto;
+}
+
 .template-upload-view {
   display: grid;
   place-items: center;

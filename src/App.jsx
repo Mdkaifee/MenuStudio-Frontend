@@ -45,6 +45,7 @@ function Dashboard() {
   const [qrModalOpen, setQrModalOpen] = useState(false)
   const [templatePreviewOpen, setTemplatePreviewOpen] = useState(false)
   const [previewTemplateId, setPreviewTemplateId] = useState('')
+  const [previewMode, setPreviewMode] = useState('menu')
 
   const authHeaders = useMemo(() => {
     return token ? { Authorization: `Bearer ${token}` } : {}
@@ -67,6 +68,7 @@ function Dashboard() {
     setQrModalOpen(false)
     setTemplatePreviewOpen(false)
     setPreviewTemplateId('')
+    setPreviewMode('menu')
     setInfoNotice('')
     localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem(USER_KEY)
@@ -397,16 +399,17 @@ function Dashboard() {
     return createItem(payload)
   }
 
-  const viewTemplate = async (templateId) => {
+  const viewTemplate = async (templateId, mode = 'menu') => {
     if (!templateId) {
       return
     }
-    if (templateId !== user.template_id) {
+    if (mode === 'menu' && templateId !== user.template_id) {
       const switched = await selectTemplate(templateId)
       if (!switched) {
         return
       }
     }
+    setPreviewMode(mode)
     setPreviewTemplateId(templateId)
     setTemplatePreviewOpen(true)
   }
@@ -565,7 +568,11 @@ function Dashboard() {
         open={templatePreviewOpen}
         restaurantId={user.id}
         template={activePreviewTemplate}
-        onClose={() => setTemplatePreviewOpen(false)}
+        mode={previewMode}
+        onClose={() => {
+          setTemplatePreviewOpen(false)
+          setPreviewMode('menu')
+        }}
       />
     </main>
   )

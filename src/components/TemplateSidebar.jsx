@@ -70,7 +70,16 @@ function TemplateSidebar({
           >
             {selectedTemplateId === tpl.id ? 'Active' : 'Use'}
           </button>
-          <button type="button" onClick={() => onViewTemplate(tpl.id)} disabled={savingTemplate}>View</button>
+          <button type="button" onClick={() => onViewTemplate(tpl.id, 'template')} disabled={savingTemplate}>
+            View Template
+          </button>
+          <button
+            type="button"
+            onClick={() => onViewTemplate(tpl.id, 'menu')}
+            disabled={savingTemplate || selectedTemplateId !== tpl.id}
+          >
+            View Menu
+          </button>
         </div>
       </td>
     </tr>
@@ -92,7 +101,14 @@ function TemplateSidebar({
           >
             {selectedTemplateId === tpl.id ? 'Active' : 'Use'}
           </button>
-          <button type="button" onClick={() => onViewTemplate(tpl.id)} disabled={savingTemplate}>View</button>
+          <button type="button" onClick={() => onViewTemplate(tpl.id, 'photo')} disabled={savingTemplate}>View Photo</button>
+          <button
+            type="button"
+            onClick={() => onViewTemplate(tpl.id, 'menu')}
+            disabled={savingTemplate || selectedTemplateId !== tpl.id}
+          >
+            View Menu
+          </button>
         </div>
       </td>
       <td className="sheet-actions">
@@ -131,10 +147,10 @@ function TemplateSidebar({
           <button type="button" className="primary" onClick={openAddModal}>Add Template</button>
           <button
             type="button"
-            onClick={() => onViewTemplate(selectedTemplateId)}
+            onClick={() => onViewTemplate(selectedTemplateId, 'menu')}
             disabled={!selectedTemplateId || savingTemplate}
           >
-            View Selected
+            View Menu
           </button>
         </div>
       </div>
