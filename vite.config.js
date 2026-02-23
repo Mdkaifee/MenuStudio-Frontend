@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     host: true,
     allowedHosts: ['.ngrok-free.dev', 'localhost', '127.0.0.1'],
+    // Dev-only proxy when frontend calls /api locally.
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
