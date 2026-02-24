@@ -450,15 +450,63 @@ function Dashboard() {
     }
   }
 
+  const downloadQrImage = () => {
+    if (!qr?.qr_data_url || !user?.id) {
+      return false
+    }
+    const link = document.createElement('a')
+    link.href = qr.qr_data_url
+    link.download = `restaurant-${user.id}-qr.png`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    return true
+  }
+
+  const dataUrlToFile = async (dataUrl, filename) => {
+    const response = await fetch(dataUrl)
+    const blob = await response.blob()
+    return new File([blob], filename, { type: blob.type || 'image/png' })
+  }
+
   const shareQr = async () => {
-    const menuUrl = `${window.location.origin}/menu/${user.id}`
-    await shareWithFallback({
-      title: `${user.restaurant_name} QR`,
-      text: `Scan this QR to view the menu for ${user.restaurant_name}: ${menuUrl}`,
-      url: menuUrl,
-      fallbackText: `QR menu link: ${menuUrl}`,
-      successText: 'QR details shared.',
-    })
+    if (!qr?.qr_data_url || !user?.id) {
+      setError('QR is not ready yet.')
+      return
+    }
+
+    const fileName = `restaurant-${user.id}-qr.png`
+
+    try {
+      setError('')
+      setInfoNotice('')
+
+      if (navigator.share) {
+        const qrFile = await dataUrlToFile(qr.qr_data_url, fileName)
+        const canShareFiles = typeof navigator.canShare !== 'function' || navigator.canShare({ files: [qrFile] })
+        if (canShareFiles) {
+          await navigator.share({
+            title: `${user.restaurant_name} QR`,
+            text: `Scan this QR to view the menu for ${user.restaurant_name}.`,
+            files: [qrFile],
+          })
+          setInfoNotice('QR image shared.')
+          return
+        }
+      }
+    } catch (err) {
+      if (err?.name === 'AbortError') {
+        return
+      }
+    }
+
+    const downloaded = downloadQrImage()
+    if (downloaded) {
+      setInfoNotice('QR image downloaded. Share this image from your device.')
+      setError('')
+    } else {
+      setError('Unable to share QR image right now.')
+    }
   }
 
   const shareMenu = async () => {
